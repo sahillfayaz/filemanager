@@ -1,0 +1,12 @@
+import { createConcept, createInstance, createRelationship, getConceptTree, getFileProvenance, getInstances, getInvertedFileTree, getRelationships, removeRelationship } from "../services/knowledgeService.js";
+import { successResponse } from "../utils/response.js";
+
+export const listConceptTree = async (req, res, next) => { try { return successResponse(res, await getConceptTree(), "Concept tree fetched successfully"); } catch (error) { return next(error); } };
+export const addConcept = async (req, res, next) => { try { return successResponse(res, await createConcept({ ...req.body, performedBy: req.user?.name || process.env.DEFAULT_USER }), "Concept created successfully", 201); } catch (error) { return next(error); } };
+export const listInstances = async (req, res, next) => { try { return successResponse(res, await getInstances(req.query), "Instances fetched successfully"); } catch (error) { return next(error); } };
+export const addInstance = async (req, res, next) => { try { return successResponse(res, await createInstance({ ...req.body, performedBy: req.user?.name || process.env.DEFAULT_USER }), "Instance created successfully", 201); } catch (error) { return next(error); } };
+export const listRelationships = async (req, res, next) => { try { return successResponse(res, await getRelationships(req.query), "Relationships fetched successfully"); } catch (error) { return next(error); } };
+export const addRelationship = async (req, res, next) => { try { return successResponse(res, await createRelationship({ ...req.body, performedBy: req.user?.name || process.env.DEFAULT_USER }), "Relationship created successfully", 201); } catch (error) { return next(error); } };
+export const deleteRelationship = async (req, res, next) => { try { return successResponse(res, await removeRelationship({ id: req.params.id, performedBy: req.user?.name || process.env.DEFAULT_USER }), "Relationship removed successfully"); } catch (error) { return next(error); } };
+export const listInvertedFileTree = async (req, res, next) => { try { return successResponse(res, await getInvertedFileTree(req.query), "Inverted file tree fetched successfully"); } catch (error) { return next(error); } };
+export const getProvenance = async (req, res, next) => { try { return successResponse(res, await getFileProvenance(req.params.fileId), "File provenance fetched successfully"); } catch (error) { return next(error); } };

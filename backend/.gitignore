@@ -1,0 +1,11 @@
+node_modules/
+.env
+uploads/content/*
+uploads/archive/*
+uploads/deletion/*
+!uploads/content/.gitkeep
+!uploads/archive/.gitkeep
+!uploads/deletion/.gitkeep
+
+node_modules/
+**/node_modules/

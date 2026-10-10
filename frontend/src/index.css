@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #0B0F14;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #0B0F14;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(76, 201, 240, 0.72);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: rgba(76, 201, 240, 0.28);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 180, 131, 0.28);
+  border-radius: 999px;
+  border: 3px solid #0B0F14;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.noise::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: screen;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
+}
+
+.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(135deg, rgba(17, 24, 39, 0.82), rgba(11, 15, 20, 0.62)),
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+}
+
+.graph-field {
+  background:
+    radial-gradient(circle at 20% 28%, rgba(76, 201, 240, 0.18) 0 2px, transparent 3px),
+    radial-gradient(circle at 64% 24%, rgba(212, 180, 131, 0.2) 0 2px, transparent 3px),
+    radial-gradient(circle at 46% 68%, rgba(46, 196, 182, 0.15) 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 72%, rgba(255, 89, 94, 0.13) 0 2px, transparent 3px),
+    linear-gradient(118deg, transparent 0 38%, rgba(76, 201, 240, 0.12) 39%, transparent 40% 100%),
+    linear-gradient(22deg, transparent 0 48%, rgba(212, 180, 131, 0.1) 49%, transparent 50% 100%);
+}
+
+.input-shell {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(11, 15, 20, 0.68);
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.input-shell:focus {
+  border-color: rgba(76, 201, 240, 0.58);
+  box-shadow: 0 0 0 4px rgba(76, 201, 240, 0.08);
+  background: rgba(11, 15, 20, 0.9);
+}
+
+.mono-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
