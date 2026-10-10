@@ -5,7 +5,8 @@ const fileShareSchema = new mongoose.Schema({
   recipient: { type: String, required: true, trim: true },
   permission: { type: String, enum: ["download"], default: "download" },
   tokenHash: { type: String, required: true, unique: true, select: false },
-  expiresAt: { type: Date, required: true, index: true },
+  // The TTL index below both indexes this field and removes expired shares.
+  expiresAt: { type: Date, required: true },
   revokedAt: { type: Date, default: null },
   createdBy: { type: String, default: "System User", trim: true }
 }, { timestamps: true });

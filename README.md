@@ -44,6 +44,22 @@ Open the Vite URL shown in the terminal, normally `http://localhost:5173`. The f
 
 See [backend/README.md](backend/README.md) for backend configuration, API routes, and storage details.
 
+## Deploying the Frontend and API Separately
+
+The frontend API URL is compiled when Vite builds the app. In the frontend
+hosting service, set `VITE_API_URL` to the complete public API URL, including
+`/api`. For the deployed API shown in this project, use:
+
+```txt
+VITE_API_URL=https://project-dhkp.onrender.com/api
+```
+
+In the backend hosting service, set `CLIENT_URL` to the exact HTTPS origin of
+the deployed frontend (without a trailing slash), for example
+`https://your-frontend.onrender.com`. If more than one frontend is needed,
+separate origins with commas. Redeploy the frontend after changing
+`VITE_API_URL`.
+
 ## Repository Layout
 
 - `backend/` - Express API, MongoDB models, and local upload storage
