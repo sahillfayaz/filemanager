@@ -11,6 +11,7 @@ import { createActivityLog } from "../services/activityService.js";
 import { successResponse } from "../utils/response.js";
 import { ACTIVITY_ACTIONS, ENTITY_TYPES, FILE_STATUS } from "../utils/constants.js";
 import { toAbsoluteStoragePath } from "../config/storage.js";
+import { sendGridFSFile } from "../services/storageService.js";
 
 export const uploadFile = async (req, res, next) => {
   try {
@@ -45,7 +46,6 @@ export const getFileDetails = async (req, res, next) => {
 export const downloadFile = async (req, res, next) => {
   try {
     const file = await getFileDocumentById(req.params.id);
-    const absolutePath = toAbsoluteStoragePath(file.storagePath);
 
     await createActivityLog({
       action: ACTIVITY_ACTIONS.FILE_DOWNLOADED,
@@ -55,7 +55,8 @@ export const downloadFile = async (req, res, next) => {
       message: `File downloaded: ${file.originalName}`
     });
 
-    return res.download(absolutePath, file.originalName);
+    if (file.storageMode === "gridfs") return sendGridFSFile(res, file);
+    return res.download(toAbsoluteStoragePath(file.storagePath), file.originalName);
   } catch (error) {
     return next(error);
   }

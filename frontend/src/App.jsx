@@ -10,6 +10,7 @@ import DeletionSpace from "./pages/DeletionSpace.jsx";
 import KnowledgeGraph from "./pages/KnowledgeGraph.jsx";
 import Login from "./pages/Login.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import AdminRequests from "./pages/AdminRequests.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/archive" element={<Archive />} />
           <Route path="/deletion" element={<DeletionSpace />} />
           <Route path="/knowledge" element={<KnowledgeGraph />} />
+          <Route path="/admin-requests" element={<AdminRequests />} />
         </Route>
         </Route>
       </Routes>

@@ -1,17 +1,24 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Activity, Archive, DatabaseZap, Files, LayoutDashboard, Network, Trash2 } from "lucide-react";
+import { Activity, Archive, DatabaseZap, Files, LayoutDashboard, LogOut, Network, ShieldCheck, Trash2 } from "lucide-react";
+import { clearSession } from "../api/session.js";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Explorer", path: "/explorer", icon: Files },
   { label: "Activity", path: "/activity", icon: Activity },
   { label: "Knowledge", path: "/knowledge", icon: Network },
+  { label: "Admin", path: "/admin-requests", icon: ShieldCheck },
   { label: "Archive", path: "/archive", icon: Archive },
   { label: "Deletion", path: "/deletion", icon: Trash2 }
 ];
 
 const NavRail = () => {
+  const navigate = useNavigate();
+  const logout = () => {
+    clearSession();
+    navigate("/login", { replace: true });
+  };
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[92px] border-r border-white/[0.07] bg-void/72 px-4 py-5 backdrop-blur-2xl lg:block">
@@ -26,12 +33,14 @@ const NavRail = () => {
             </motion.div>
             <NavItems vertical />
           </div>
-          <div className="h-12 w-px bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
+          <button onClick={logout} title="Log out" className="grid h-12 w-12 place-items-center rounded-2xl text-white/45 transition hover:bg-danger/10 hover:text-danger">
+            <LogOut size={20} />
+          </button>
         </div>
       </aside>
 
       <nav className="fixed inset-x-3 bottom-3 z-40 flex justify-between rounded-[24px] border border-white/[0.08] bg-void/82 p-2 shadow-2xl backdrop-blur-2xl lg:hidden">
-        <NavItems />
+        <div className="flex w-full items-center gap-1"><NavItems /><button onClick={logout} title="Log out" className="grid h-12 w-12 flex-none place-items-center rounded-2xl text-white/45 hover:bg-danger/10 hover:text-danger"><LogOut size={19} /></button></div>
       </nav>
     </>
   );

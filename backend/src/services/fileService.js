@@ -9,6 +9,7 @@ import { createActivityLog } from "./activityService.js";
 import { ACTIVITY_ACTIONS, ENTITY_TYPES, FILE_STATUS } from "../utils/constants.js";
 import { getStoragePathForStatus, toAbsoluteStoragePath, toRelativeStoragePath } from "../config/storage.js";
 import { normalizeText, parseTags, parseMetadataInput } from "../utils/response.js";
+import { deleteGridFSFile, uploadToGridFS, useGridFS } from "./storageService.js";
 
 const buildMetadataRecords = (fileId, metadataItems = []) => {
   return metadataItems
@@ -47,6 +48,10 @@ export const createFileFromUpload = async ({ uploadedFile, body }) => {
   const sha256Hash = await generateSHA256(uploadedFile.path);
   const duplicate = await File.findOne({ sha256Hash }).sort({ createdAt: 1 });
   const uploadedBy = body.uploadedBy || process.env.DEFAULT_USER || "System User";
+  const lanPeerUrl = String(body.lanPeerUrl || process.env.LAN_PEER_URL || "").replace(/\/$/, "");
+  const gridFsId = useGridFS()
+    ? await uploadToGridFS({ localPath: uploadedFile.path, storedName: uploadedFile.filename, mimeType: uploadedFile.mimetype })
+    : null;
 
   const file = await File.create({
     originalName: uploadedFile.originalname,
@@ -55,7 +60,10 @@ export const createFileFromUpload = async ({ uploadedFile, body }) => {
     size: uploadedFile.size,
     extension: path.extname(uploadedFile.originalname).replace(".", "").toLowerCase(),
     sha256Hash,
-    storagePath: toRelativeStoragePath(uploadedFile.path),
+    storagePath: gridFsId ? `gridfs://${gridFsId}` : toRelativeStoragePath(uploadedFile.path),
+    storageMode: gridFsId ? "gridfs" : "local",
+    gridFsId,
+    lanPeerUrl,
     status: FILE_STATUS.CONTENT,
     uploadedBy,
     description: body.description || "",
@@ -150,14 +158,15 @@ export const getFileDocumentById = async (id) => {
 
 export const moveFileToStatus = async ({ id, status, performedBy }) => {
   const file = await getFileDocumentById(id);
-  const oldAbsolutePath = toAbsoluteStoragePath(file.storagePath);
-  const targetDirectory = getStoragePathForStatus(status);
-  const targetAbsolutePath = path.join(targetDirectory, file.storedName);
-
   if (file.status !== status) {
-    await fs.rename(oldAbsolutePath, targetAbsolutePath);
+    if (file.storageMode !== "gridfs") {
+      const oldAbsolutePath = toAbsoluteStoragePath(file.storagePath);
+      const targetDirectory = getStoragePathForStatus(status);
+      const targetAbsolutePath = path.join(targetDirectory, file.storedName);
+      await fs.rename(oldAbsolutePath, targetAbsolutePath);
+      file.storagePath = toRelativeStoragePath(targetAbsolutePath);
+    }
     file.status = status;
-    file.storagePath = toRelativeStoragePath(targetAbsolutePath);
     await file.save();
   }
 
@@ -188,10 +197,14 @@ export const permanentlyDeleteFile = async ({ id, performedBy }) => {
     throw error;
   }
 
-  const absolutePath = toAbsoluteStoragePath(file.storagePath);
-  await fs.unlink(absolutePath).catch((err) => {
-    if (err.code !== "ENOENT") throw err;
-  });
+  if (file.storageMode === "gridfs") {
+    await deleteGridFSFile(file.gridFsId);
+  } else {
+    const absolutePath = toAbsoluteStoragePath(file.storagePath);
+    await fs.unlink(absolutePath).catch((err) => {
+      if (err.code !== "ENOENT") throw err;
+    });
+  }
 
   await Promise.all([
     Metadata.deleteMany({ fileId: file._id }),

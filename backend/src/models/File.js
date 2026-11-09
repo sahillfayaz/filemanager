@@ -34,6 +34,21 @@ const fileSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    storageMode: {
+      type: String,
+      enum: ["local", "gridfs"],
+      default: "local",
+      index: true
+    },
+    gridFsId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null
+    },
+    lanPeerUrl: {
+      type: String,
+      default: "",
+      trim: true
+    },
     status: {
       type: String,
       enum: Object.values(FILE_STATUS),
